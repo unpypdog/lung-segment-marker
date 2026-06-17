@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>右下叶基底段 — 支气管分段标记</title>
+<style>
+  :root {
+    --bg: #f5f2ed;
+    --card: #ffffff;
+    --text: #2c2826;
+    --text-secondary: #7a736d;
+    --teal: #0d9488;
+    --teal-light: #ccfbf1;
+    --blue: #2563eb;
+    --blue-light: #dbeafe;
+    --violet: #7c3aed;
+    --violet-light: #ede9fe;
+    --rose: #e11d48;
+    --rose-light: #ffe4e6;
+    --gold: #d97706;
+    --gold-bg: #fef3c7;
+    --danger: #dc2626;
+    --danger-light: #fee2e2;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.04);
+    --shadow-lg: 0 10px 30px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.05);
+    --radius: 20px;
+    --radius-sm: 12px;
+    --font-display: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    --font-body: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    background-image:
+      radial-gradient(ellipse at 50% 0%, rgba(13,148,136,0.04) 0%, transparent 60%),
+      radial-gradient(ellipse at 85% 100%, rgba(124,58,237,0.03) 0%, transparent 50%);
+    min-height: 100dvh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 16px;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    transition: box-shadow 0.3s ease;
+  }
+
+  .title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .title-group h1 {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.02em;
+  }
+
+  .title-group .subtitle {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  /* ===== REGRET TOGGLE ===== */
+  .regret-toggle-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .regret-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    transition: color 0.25s ease;
+  }
+  .regret-label.active {
+    color: #b45309;
+  }
+
+  .toggle-track {
+    width: 52px;
+    height: 30px;
+    border-radius: 15px;
+    background: #e5e0da;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.3s ease;
+    flex-shrink: 0;
+  }
+  .toggle-track.active {
+    background: #f59e0b;
+  }
+
+  .toggle-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .toggle-track.active .toggle-thumb {
+    transform: translateX(22px);
+  }
+
+  /* ===== ORDER TRACK ===== */
+  .order-track {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .order-track-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    writing-mode: vertical-lr;
+    flex-shrink: 0;
+    height: auto;
+  }
+
+  .order-slots {
+    display: flex;
+    gap: 8px;
+    flex: 1;
+  }
+
+  .order-slot {
+    flex: 1;
+    aspect-ratio: 1;
+    max-width: 56px;
+    border-radius: var(--radius-sm);
+    background: #f8f6f3;
+    border: 2px dashed #e0dcd5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    min-height: 56px;
+  }
+
+  .order-slot.filled {
+    border-style: solid;
+    animation: slotPopIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes slotPopIn {
+    0% { transform: scale(0.7); opacity: 0; }
+    60% { transform: scale(1.08); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .order-slot .slot-num {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #c4bfb8;
+    letter-spacing: 0.02em;
+  }
+  .order-slot.filled .slot-num {
+    color: rgba(255,255,255,0.8);
+  }
+
+  .order-slot .slot-label {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #d4cfc9;
+  }
+  .order-slot.filled .slot-label {
+    color: #fff;
+  }
+
+  .order-slot.slot-teal { background: #f0fdfa; border-color: #ccfbf1; }
+  .order-slot.slot-teal.filled { background: var(--teal); border-color: var(--teal); }
+
+  .order-slot.slot-blue { background: #eff6ff; border-color: #dbeafe; }
+  .order-slot.slot-blue.filled { background: var(--blue); border-color: var(--blue); }
+
+  .order-slot.slot-violet { background: #f5f3ff; border-color: #ede9fe; }
+  .order-slot.slot-violet.filled { background: var(--violet); border-color: var(--violet); }
+
+  .order-slot.slot-rose { background: #fff1f2; border-color: #ffe4e6; }
+  .order-slot.slot-rose.filled { background: var(--rose); border-color: var(--rose); }
+
+  /* ===== SEGMENT BUTTONS GRID ===== */
+  .segment-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .seg-btn {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 22px 12px 18px;
+    min-height: 100px;
+    border-radius: var(--radius);
+    border: 2.5px solid transparent;
+    cursor: pointer;
+    font-family: var(--font-display);
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+    background: var(--card);
+  }
+
+  .seg-btn:active {
+    transform: scale(0.96);
+    transition: transform 0.1s ease;
+  }
+
+  .seg-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  /* Button color themes */
+  .seg-btn.btn-teal { border-color: #e6f3f1; }
+  .seg-btn.btn-teal .seg-icon { color: var(--teal); }
+  .seg-btn.btn-teal.selected { background: #f0fdfa; border-color: var(--teal); box-shadow: 0 0 0 4px rgba(13,148,136,0.12), var(--shadow-md); }
+
+  .seg-btn.btn-blue { border-color: #e8edf8; }
+  .seg-btn.btn-blue .seg-icon { color: var(--blue); }
+  .seg-btn.btn-blue.selected { background: #eff6ff; border-color: var(--blue); box-shadow: 0 0 0 4px rgba(37,99,235,0.12), var(--shadow-md); }
+
+  .seg-btn.btn-violet { border-color: #eeebf6; }
+  .seg-btn.btn-violet .seg-icon { color: var(--violet); }
+  .seg-btn.btn-violet.selected { background: #f5f3ff; border-color: var(--violet); box-shadow: 0 0 0 4px rgba(124,58,237,0.12), var(--shadow-md); }
+
+  .seg-btn.btn-rose { border-color: #f6eaec; }
+  .seg-btn.btn-rose .seg-icon { color: var(--rose); }
+  .seg-btn.btn-rose.selected { background: #fff1f2; border-color: var(--rose); box-shadow: 0 0 0 4px rgba(225,29,72,0.12), var(--shadow-md); }
+
+  .seg-btn .seg-icon {
+    font-size: 2.2rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    transition: transform 0.25s ease, color 0.25s ease;
+  }
+  .seg-btn.selected .seg-icon {
+    transform: scale(1.08);
+  }
+
+  .seg-btn .seg-fullname {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-align: center;
+    line-height: 1.3;
+    letter-spacing: 0.01em;
+    transition: color 0.25s ease;
+  }
+  .seg-btn.selected .seg-fullname {
+    color: #5c5651;
+  }
+
+  /* Order badge on button */
+  .order-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 8px rgba(217,119,6,0.35);
+    opacity: 0;
+    transform: scale(0.3);
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 2;
+    letter-spacing: 0;
+  }
+  .order-badge.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* Eligible for undo glow (regret mode) */
+  .seg-btn.can-undo {
+    animation: undoGlow 1.2s ease-in-out infinite;
+  }
+
+  @keyframes undoGlow {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(245,158,11,0.25), var(--shadow-md); }
+    50% { box-shadow: 0 0 0 10px rgba(245,158,11,0.08), var(--shadow-md); }
+  }
+
+  .seg-btn.shake {
+    animation: shake 0.5s ease;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    15% { transform: translateX(-6px); }
+    30% { transform: translateX(6px); }
+    45% { transform: translateX(-5px); }
+    60% { transform: translateX(4px); }
+    75% { transform: translateX(-2px); }
+  }
+
+  /* ===== RESET BUTTON ===== */
+  .reset-area {
+    display: flex;
+    justify-content: center;
+    padding-top: 2px;
+  }
+
+  .reset-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 32px;
+    border-radius: 50px;
+    border: 2px solid #e8e3dc;
+    background: var(--card);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: var(--font-body);
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.25s ease;
+    letter-spacing: 0.03em;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .reset-btn:active {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: var(--danger);
+    transform: scale(0.96);
+  }
+
+  .reset-icon {
+    width: 18px;
+    height: 18px;
+    transition: transform 0.3s ease;
+  }
+  .reset-btn:active .reset-icon {
+    transform: rotate(-90deg);
+  }
+
+  /* ===== REGRET MODE BANNER ===== */
+  .regret-banner {
+    background: #fffbeb;
+    border: 1.5px solid #fde68a;
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #92400e;
+    text-align: center;
+    letter-spacing: 0.02em;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .regret-banner.show {
+    display: block;
+  }
+
+  .regret-banner .arrow-hint {
+    display: inline-block;
+    animation: bounceDown 0.8s ease-in-out infinite;
+  }
+
+  @keyframes bounceDown {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(3px); }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <header class="header">
+    <div class="title-group">
+      <h1>右下叶基底段</h1>
+      <span class="subtitle">支气管分段标记</span>
+    </div>
+    <div class="regret-toggle-wrap">
+      <span class="regret-label" id="regretLabel">后悔模式</span>
+      <div class="toggle-track" id="regretToggle" role="switch" aria-checked="false">
+        <div class="toggle-thumb"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Regret banner -->
+  <div class="regret-banner" id="regretBanner">
+    <span class="arrow-hint">&#x25BC;</span> 点击最后一个标记可撤销，或点击未标记按钮重新绑定 <span class="arrow-hint">&#x25BC;</span>
+  </div>
+
+  <!-- Order Track -->
+  <div class="order-track">
+    <span class="order-track-label">顺序</span>
+    <div class="order-slots">
+      <div class="order-slot" data-slot="0">
+        <span class="slot-num">1</span>
+        <span class="slot-label">—</span>
+      </div>
+      <div class="order-slot" data-slot="1">
+        <span class="slot-num">2</span>
+        <span class="slot-label">—</span>
+      </div>
+      <div class="order-slot" data-slot="2">
+        <span class="slot-num">3</span>
+        <span class="slot-label">—</span>
+      </div>
+      <div class="order-slot" data-slot="3">
+        <span class="slot-num">4</span>
+        <span class="slot-label">—</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Segment Buttons -->
+  <div class="segment-grid" id="segmentGrid">
+    <button class="seg-btn btn-teal" data-index="0">
+      <span class="seg-icon">前</span>
+      <span class="seg-fullname">右下叶前基底段</span>
+      <span class="order-badge"></span>
+    </button>
+    <button class="seg-btn btn-blue" data-index="1">
+      <span class="seg-icon">后</span>
+      <span class="seg-fullname">右下叶后基底段</span>
+      <span class="order-badge"></span>
+    </button>
+    <button class="seg-btn btn-violet" data-index="2">
+      <span class="seg-icon">内</span>
+      <span class="seg-fullname">右下叶内基底段</span>
+      <span class="order-badge"></span>
+    </button>
+    <button class="seg-btn btn-rose" data-index="3">
+      <span class="seg-icon">外</span>
+      <span class="seg-fullname">右下叶外基底段</span>
+      <span class="order-badge"></span>
+    </button>
+  </div>
+
+  <!-- Reset -->
+  <div class="reset-area">
+    <button class="reset-btn" id="resetBtn">
+      <svg class="reset-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="1 4 1 10 7 10"/>
+        <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+      </svg>
+      重置全部
+    </button>
+  </div>
+</div>
+
+<script>
+(function() {
+  const BTN_COLORS = ['teal', 'blue', 'violet', 'rose'];
+  const BTN_LABELS = ['前', '后', '内', '外'];
+  const SLOT_COLORS = ['slot-teal', 'slot-blue', 'slot-violet', 'slot-rose'];
+
+  // State
+  let selections = [null, null, null, null];  // index -> order (1-4) or null
+  let orderMap = [null, null, null, null, null]; // order (1-4) -> button index
+  let nextOrder = 1;
+  let regretMode = false;
+
+  // DOM refs
+  const buttons = document.querySelectorAll('.seg-btn');
+  const badges = document.querySelectorAll('.order-badge');
+  const orderSlots = document.querySelectorAll('.order-slot');
+  const regretToggle = document.getElementById('regretToggle');
+  const regretLabel = document.getElementById('regretLabel');
+  const regretBanner = document.getElementById('regretBanner');
+  const resetBtn = document.getElementById('resetBtn');
+
+  function currentMaxOrder() {
+    return nextOrder - 1;
+  }
+
+  function updateUI() {
+    // Update button states
+    buttons.forEach((btn, i) => {
+      const badge = badges[i];
+      if (selections[i] !== null) {
+        btn.classList.add('selected');
+        badge.textContent = selections[i];
+        badge.classList.add('show');
+      } else {
+        btn.classList.remove('selected');
+        badge.classList.remove('show');
+      }
+
+      // Undo eligibility glow
+      btn.classList.remove('can-undo');
+      if (regretMode && selections[i] !== null && selections[i] === currentMaxOrder()) {
+        btn.classList.add('can-undo');
+      }
+    });
+
+    // Update order slots
+    orderSlots.forEach((slot, i) => {
+      const orderNum = i + 1;
+      const labelEl = slot.querySelector('.slot-label');
+      // Remove old color classes
+      SLOT_COLORS.forEach(c => slot.classList.remove(c));
+      slot.classList.remove('filled');
+
+      if (orderMap[orderNum] !== null) {
+        const btnIdx = orderMap[orderNum];
+        slot.classList.add('filled', SLOT_COLORS[btnIdx]);
+        labelEl.textContent = BTN_LABELS[btnIdx];
+      } else {
+        labelEl.textContent = '—';
+      }
+    });
+
+    // Regret mode UI
+    if (regretMode) {
+      regretToggle.classList.add('active');
+      regretToggle.setAttribute('aria-checked', 'true');
+      regretLabel.classList.add('active');
+      if (currentMaxOrder() >= 1) {
+        regretBanner.classList.add('show');
+      } else {
+        regretBanner.classList.remove('show');
+      }
+    } else {
+      regretToggle.classList.remove('active');
+      regretToggle.setAttribute('aria-checked', 'false');
+      regretLabel.classList.remove('active');
+      regretBanner.classList.remove('show');
+    }
+  }
+
+  function handleButtonClick(index) {
+    if (regretMode) {
+      // --- REGRET MODE ---
+      if (selections[index] !== null) {
+        // Button IS selected: only allow undoing the LAST one (LIFO)
+        if (selections[index] !== currentMaxOrder()) {
+          shakeButton(index);
+          flashEligibleButton();
+          return;
+        }
+        // OK to regret this one
+        orderMap[selections[index]] = null;
+        selections[index] = null;
+        nextOrder--;
+        updateUI();
+        if (currentMaxOrder() < 1) {
+          regretBanner.classList.remove('show');
+        }
+      } else {
+        // Button is UNSELECTED: allow re-selecting to fill the open position
+        if (nextOrder > 4) {
+          return;
+        }
+        selections[index] = nextOrder;
+        orderMap[nextOrder] = index;
+        nextOrder++;
+        updateUI();
+      }
+    } else {
+      // --- NORMAL MODE ---
+      if (selections[index] !== null) {
+        return;
+      }
+      if (nextOrder > 4) {
+        return;
+      }
+      selections[index] = nextOrder;
+      orderMap[nextOrder] = index;
+      nextOrder++;
+      updateUI();
+    }
+  }
+
+  function shakeButton(index) {
+    const btn = buttons[index];
+    btn.classList.add('shake');
+    btn.addEventListener('animationend', function handler() {
+      btn.classList.remove('shake');
+      btn.removeEventListener('animationend', handler);
+    });
+  }
+
+  function flashEligibleButton() {
+    const eligibleIdx = currentMaxOrder() >= 1 ? orderMap[currentMaxOrder()] : null;
+    if (eligibleIdx !== null) {
+      const btn = buttons[eligibleIdx];
+      btn.classList.remove('can-undo');
+      // Force reflow to restart animation
+      void btn.offsetWidth;
+      btn.classList.add('can-undo');
+    }
+  }
+
+  function resetAll() {
+    selections = [null, null, null, null];
+    orderMap = [null, null, null, null, null];
+    nextOrder = 1;
+    regretMode = false;
+    updateUI();
+  }
+
+  function toggleRegretMode() {
+    regretMode = !regretMode;
+    updateUI();
+  }
+
+  // Event listeners
+  buttons.forEach((btn, i) => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      handleButtonClick(i);
+    });
+    // Prevent double-tap zoom
+    btn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      handleButtonClick(i);
+    });
+  });
+
+  regretToggle.addEventListener('click', toggleRegretMode);
+
+  resetBtn.addEventListener('click', resetAll);
+  resetBtn.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    resetAll();
+  });
+
+  // Initial render
+  updateUI();
+})();
+</script>
+</body>
+</html>
