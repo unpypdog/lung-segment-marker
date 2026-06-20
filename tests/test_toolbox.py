@@ -1,7 +1,9 @@
 """Test the toolbox homepage."""
+from pathlib import Path
 from playwright.sync_api import sync_playwright
 
-FILE_URL = "file:///C:/Users/unpyp/Desktop/work/temp/lung_marker/index.html"
+PROJECT_ROOT = Path(__file__).parent.parent
+FILE_URL = f"file:///{PROJECT_ROOT / 'index.html'}"
 
 
 def run():
@@ -35,24 +37,24 @@ def run():
 
         # Test 3: First card links to lung marker
         first_link = cards.nth(0).get_attribute("href")
-        if first_link != "./lung-marker.html":
-            errors.append(f"Card 0: expected href './lung-marker.html', got '{first_link}'")
+        if first_link != "./tools/lung-marker/index.html":
+            errors.append(f"Card 0: expected href './tools/lung-marker/index.html', got '{first_link}'")
         else:
-            print(f"[OK] Card 0 → lung-marker.html")
+            print(f"[OK] Card 0 → tools/lung-marker/index.html")
 
         # Test 4: Second card links to tax calc
         second_link = cards.nth(1).get_attribute("href")
-        if second_link != "./tax-calc.html":
-            errors.append(f"Card 1: expected href './tax-calc.html', got '{second_link}'")
+        if second_link != "./tools/tax-calc/index.html":
+            errors.append(f"Card 1: expected href './tools/tax-calc/index.html', got '{second_link}'")
         else:
-            print(f"[OK] Card 1 → tax-calc.html")
+            print(f"[OK] Card 1 → tools/tax-calc/index.html")
 
         # Test 5: Third card links to RMB converter
         third_link = cards.nth(2).get_attribute("href")
-        if third_link != "./rmb-upper.html":
-            errors.append(f"Card 2: expected href './rmb-upper.html', got '{third_link}'")
+        if third_link != "./tools/rmb-upper/index.html":
+            errors.append(f"Card 2: expected href './tools/rmb-upper/index.html', got '{third_link}'")
         else:
-            print(f"[OK] Card 2 → rmb-upper.html")
+            print(f"[OK] Card 2 → tools/rmb-upper/index.html")
 
         # Test 6: Navigate to lung marker and back
         cards.nth(0).click()

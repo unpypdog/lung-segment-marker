@@ -1,7 +1,9 @@
 """Test the tax point calculator page."""
+from pathlib import Path
 from playwright.sync_api import sync_playwright
 
-FILE_URL = "file:///C:/Users/unpyp/Desktop/work/temp/lung_marker/tax-calc.html"
+PROJECT_ROOT = Path(__file__).parent.parent
+FILE_URL = f"file:///{PROJECT_ROOT / 'tools' / 'tax-calc' / 'index.html'}"
 
 
 def run():
@@ -114,8 +116,8 @@ def run():
             errors.append("Back link a.back-link not found")
         else:
             href = back_link.get_attribute("href")
-            if href != "./index.html":
-                errors.append(f"Back link href expected './index.html', got '{href}'")
+            if href != "../../index.html":
+                errors.append(f"Back link href expected '../../index.html', got '{href}'")
             else:
                 print(f"[OK] Back link: {href}")
 

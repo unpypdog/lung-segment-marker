@@ -1,8 +1,12 @@
 """Test the lung segment marker web app on mobile viewport."""
+from pathlib import Path
 from playwright.sync_api import sync_playwright
 import sys
 
-FILE_URL = "file:///C:/Users/unpyp/Desktop/work/temp/lung_marker/lung-marker.html"
+PROJECT_ROOT = Path(__file__).parent.parent
+FILE_URL = f"file:///{PROJECT_ROOT / 'tools' / 'lung-marker' / 'index.html'}"
+SCREENSHOT_DIR = PROJECT_ROOT / 'tests' / 'screenshots'
+SCREENSHOT_DIR.mkdir(exist_ok=True)
 
 def run():
     with sync_playwright() as p:
@@ -19,7 +23,7 @@ def run():
         errors = []
 
         # === Screenshot of initial state ===
-        page.screenshot(path="C:/Users/unpyp/Desktop/work/temp/test_01_initial.png", full_page=True)
+        page.screenshot(path=str(SCREENSHOT_DIR / "test_01_initial.png"), full_page=True)
         print("[OK] Initial screenshot saved")
 
         # === Test 1: Four buttons display correctly ===
@@ -45,7 +49,7 @@ def run():
             btns.nth(idx).click()
             page.wait_for_timeout(200)
 
-        page.screenshot(path="C:/Users/unpyp/Desktop/work/temp/test_02_all_selected.png", full_page=True)
+        page.screenshot(path=str(SCREENSHOT_DIR / "test_02_all_selected.png"), full_page=True)
 
         # Verify order badges
         for i in range(4):
@@ -75,7 +79,7 @@ def run():
         page.locator("#resetBtn").click()
         page.wait_for_timeout(300)
 
-        page.screenshot(path="C:/Users/unpyp/Desktop/work/temp/test_03_after_reset.png", full_page=True)
+        page.screenshot(path=str(SCREENSHOT_DIR / "test_03_after_reset.png"), full_page=True)
 
         for i in range(4):
             badge = btns.nth(i).locator(".order-badge")
@@ -101,7 +105,7 @@ def run():
         # Enable regret mode
         page.locator("#regretToggle").click()
         page.wait_for_timeout(300)
-        page.screenshot(path="C:/Users/unpyp/Desktop/work/temp/test_04a_regret_mode.png", full_page=True)
+        page.screenshot(path=str(SCREENSHOT_DIR / "test_04a_regret_mode.png"), full_page=True)
 
         # Verify regret mode is active
         if not page.locator("#regretToggle").evaluate("el => el.classList.contains('active')"):
@@ -133,7 +137,7 @@ def run():
             # shake is transient (removed after animation), may have already finished
             pass
 
-        page.screenshot(path="C:/Users/unpyp/Desktop/work/temp/test_04b_undo_blocked.png", full_page=True)
+        page.screenshot(path=str(SCREENSHOT_DIR / "test_04b_undo_blocked.png"), full_page=True)
 
         # Now undo button 外 (index 3, order 4) — should SUCCEED (is the last)
         btns.nth(3).click()
@@ -159,7 +163,7 @@ def run():
         btns.nth(0).click()
         page.wait_for_timeout(200)
 
-        page.screenshot(path="C:/Users/unpyp/Desktop/work/temp/test_04c_all_undone.png", full_page=True)
+        page.screenshot(path=str(SCREENSHOT_DIR / "test_04c_all_undone.png"), full_page=True)
 
         # Verify all cleared
         for i in range(4):
