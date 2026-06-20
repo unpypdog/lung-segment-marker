@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>人民币大写转换</title>
+<style>
+  :root {
+    --bg: #f5f2ed;
+    --card: #ffffff;
+    --text: #2c2826;
+    --text-secondary: #7a736d;
+    --teal: #0d9488;
+    --teal-light: #ccfbf1;
+    --gold: #d97706;
+    --gold-bg: #fef3c7;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.04);
+    --radius: 20px;
+    --radius-sm: 12px;
+    --font-display: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    --font-body: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    background-image:
+      radial-gradient(ellipse at 50% 0%, rgba(13,148,136,0.04) 0%, transparent 60%),
+      radial-gradient(ellipse at 85% 100%, rgba(124,58,237,0.03) 0%, transparent 50%);
+    min-height: 100dvh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 16px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    animation: fadeIn 0.4s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  a.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    width: fit-content;
+    transition: color 0.2s;
+  }
+  a.back-link:active { color: var(--teal); }
+
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .card h2 {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .input-group label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  .input-group input {
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    border: 2px solid #e5e0da;
+    font-size: 1rem;
+    font-family: var(--font-body);
+    background: #faf9f7;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .input-group input:focus {
+    border-color: var(--teal);
+    background: #fff;
+  }
+
+  .result-box {
+    background: #f8f6f3;
+    border-radius: var(--radius-sm);
+    padding: 18px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    min-height: 80px;
+    justify-content: center;
+  }
+
+  .result-text {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: 0.04em;
+    word-break: break-all;
+    text-align: center;
+  }
+
+  .copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 18px;
+    border-radius: 20px;
+    border: 1.5px solid #e5e0da;
+    background: #fff;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .copy-btn:active { transform: scale(0.95); }
+  .copy-btn.copied {
+    background: var(--teal-light);
+    border-color: var(--teal);
+    color: var(--teal);
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <a class="back-link" href="./index.html">&#x2190; 返回工具箱</a>
+
+  <div class="card">
+    <h2>人民币大写转换</h2>
+
+    <div class="input-group">
+      <label for="amountInput">金额</label>
+      <input type="number" id="amountInput" placeholder="输入金额" inputmode="decimal" step="0.01">
+    </div>
+
+    <div class="result-box">
+      <span class="result-text" id="result">请输入金额</span>
+      <button class="copy-btn" id="copyBtn">复制</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const DIGITS_CN = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'];
+  const UNITS_INT = ['', '拾', '佰', '仟'];
+  const BIG_UNITS = ['', '万', '亿', '兆'];
+  const UNITS_DEC = ['角', '分'];
+
+  function convertIntegerPart(n) {
+    if (n === '0') return '零';
+    var str = '';
+    var len = n.length;
+    var groups = [];
+    for (var i = len; i > 0; i -= 4) {
+      groups.push(n.substring(Math.max(0, i - 4), i));
+    }
+
+    for (var g = groups.length - 1; g >= 0; g--) {
+      var group = groups[g];
+      var groupStr = '';
+      var hasValue = false;
+      for (var j = 0; j < group.length; j++) {
+        var d = parseInt(group[j]);
+        var pos = group.length - 1 - j;
+        if (d !== 0) {
+          groupStr += DIGITS_CN[d] + UNITS_INT[pos];
+          hasValue = true;
+        } else {
+          if (j < group.length - 1 && parseInt(group[j + 1]) !== 0) {
+            groupStr += '零';
+          }
+        }
+      }
+      if (hasValue) {
+        str += groupStr + BIG_UNITS[g];
+      }
+    }
+    str = str.replace(/零+/g, '零');
+    if (str.endsWith('零')) str = str.slice(0, -1);
+    return str + '元';
+  }
+
+  function convertDecimalPart(d) {
+    if (!d || d === '00') return '整';
+    var str = '';
+    var jiao = parseInt(d[0] || '0');
+    var fen = parseInt(d[1] || '0');
+    if (jiao > 0) str += DIGITS_CN[jiao] + '角';
+    if (fen > 0) str += DIGITS_CN[fen] + '分';
+    return str;
+  }
+
+  function convert(amount) {
+    var parts = amount.toFixed(2).split('.');
+    var intPart = parts[0];
+    var decPart = parts[1];
+    var intStr = convertIntegerPart(intPart);
+    var decStr = convertDecimalPart(decPart);
+
+    if (intStr === '零元' && decStr === '整') return '零元整';
+    if (intStr === '零元' && decStr !== '整') return decStr;
+    return intStr + decStr;
+  }
+
+  var amountInput = document.getElementById('amountInput');
+  var resultEl = document.getElementById('result');
+
+  amountInput.addEventListener('input', function() {
+    var val = parseFloat(this.value);
+    if (isNaN(val) || val < 0) {
+      resultEl.textContent = '请输入金额';
+      return;
+    }
+    resultEl.textContent = convert(val);
+  });
+
+  // Copy button
+  document.getElementById('copyBtn').addEventListener('click', function() {
+    var text = resultEl.textContent;
+    if (text === '请输入金额') return;
+    navigator.clipboard.writeText(text).then(function() {
+      var btn = document.getElementById('copyBtn');
+      btn.textContent = '已复制';
+      btn.classList.add('copied');
+      setTimeout(function() {
+        btn.textContent = '复制';
+        btn.classList.remove('copied');
+      }, 1500);
+    }).catch(function() {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      var btn = document.getElementById('copyBtn');
+      btn.textContent = '已复制';
+      btn.classList.add('copied');
+      setTimeout(function() {
+        btn.textContent = '复制';
+        btn.classList.remove('copied');
+      }, 1500);
+    });
+  });
+})();
+</script>
+</body>
+</html>
