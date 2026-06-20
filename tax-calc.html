@@ -261,12 +261,16 @@
       customRateInput.classList.add('show');
     } else {
       customRateInput.classList.remove('show');
+      customRateInput.value = '';
     }
     calc();
   });
 
   amountInput.addEventListener('input', calc);
+  amountInput.addEventListener('change', calc);
   customRateInput.addEventListener('input', calc);
+  customRateInput.addEventListener('change', calc);
+  customRateInput.addEventListener('blur', calc);
 
   // Copy buttons
   document.querySelectorAll('.copy-btn').forEach(function(btn) {

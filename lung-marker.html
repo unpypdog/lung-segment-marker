@@ -447,7 +447,7 @@
     </div>
     <div class="regret-toggle-wrap">
       <span class="regret-label" id="regretLabel">后悔模式</span>
-      <div class="toggle-track" id="regretToggle" role="switch" aria-checked="false">
+      <div class="toggle-track" id="regretToggle" role="switch" aria-checked="true">
         <div class="toggle-thumb"></div>
       </div>
     </div>
@@ -527,7 +527,7 @@
   let selections = [null, null, null, null];  // index -> order (1-4) or null
   let orderMap = [null, null, null, null, null]; // order (1-4) -> button index
   let nextOrder = 1;
-  let regretMode = false;
+  let regretMode = true;
 
   // DOM refs
   const buttons = document.querySelectorAll('.seg-btn');
@@ -664,7 +664,6 @@
     selections = [null, null, null, null];
     orderMap = [null, null, null, null, null];
     nextOrder = 1;
-    regretMode = false;
     updateUI();
   }
 
